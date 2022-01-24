@@ -118,3 +118,27 @@ function myFunction() {
    navbar.className = navbar.className.replace(" w3-card-2 w3-animate-top w3-white", "");
  }
 }
+
+
+//Portfolio: zoom image
+const modalContainer = document.getElementById("modal01");
+var modalImage = document.getElementById("img01");
+const images = document.querySelectorAll('.w3-hover-opacity');
+
+images.forEach(function(image){
+	image.addEventListener('click', function(e) {
+		let currentUrl = this.src;
+		//imageUrl = (e.currentTarget.dataset);
+		//zoomImage(imageUrl);
+		console.log(currentUrl);
+		zoomImage(currentUrl);
+	});
+	
+});
+
+function zoomImage(current){
+	//let currentImageUrl = current;
+	//console.log(currentImageUrl); 
+	modalContainer.style.display = "block";
+	modalImage.src= current;
+}
