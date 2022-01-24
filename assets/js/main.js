@@ -128,17 +128,12 @@ const images = document.querySelectorAll('.w3-hover-opacity');
 images.forEach(function(image){
 	image.addEventListener('click', function(e) {
 		let currentUrl = this.src;
-		//imageUrl = (e.currentTarget.dataset);
-		//zoomImage(imageUrl);
-		console.log(currentUrl);
 		zoomImage(currentUrl);
 	});
 	
 });
 
 function zoomImage(current){
-	//let currentImageUrl = current;
-	//console.log(currentImageUrl); 
 	modalContainer.style.display = "block";
 	modalImage.src= current;
 }
