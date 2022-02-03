@@ -130,7 +130,6 @@ images.forEach(function(image){
 		let currentUrl = this.src;
 		zoomImage(currentUrl);
 	});
-	
 });
 
 function zoomImage(current){

@@ -1,3 +1,56 @@
+<?php
+
+if (isset($_POST['email']) && (isset($_POST['name']))) {
+
+    $POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
+
+    /*function sanitize_my_email($field){
+        $field= filter_var($field, FILTER_SANITIZE_EMAIL);
+        if (filter_var($field, FILTER_VALIDATE_EMAIL)) {
+            return true;
+        } else {
+            return false;
+        }
+    }*/
+
+    $name = $POST['name'];
+    $to = "point7test@gmail.com";
+    $email = strip_tags($POST['email']);
+    $subject = "Web form";
+    $comment = '<p>Message received from: ' . $name . '</p> 
+               <p>Email: ' . $email . '</p>
+               <p>Comment: ' . strip_tags($POST['comment']) . '</p>';
+    
+    $headers = [
+        'MIME-Version' => 'MIME-Version: 1.0',
+        'Content-type' => 'text/html; charset=UTF-8',
+        'From' => $name,
+        'Reply-to' => $email,
+    ];
+    
+    /*if(sanitize_my_email($email)) {
+        try {
+            mail($to, $subject, $comment, $headers);
+            echo "Thank you, your message has been sent!";
+        } catch (Exception $e){
+            echo "Message could not be sent";
+        } 
+    } else {
+        echo "Message could not be sent";
+    }*/
+    try {
+        mail($to, $subject, $comment, $headers);
+        echo "Thank you, your message has been sent!";
+    } catch (Exception $e){
+        echo "Message could not be sent";
+    } 
+
+    header("location: success.html");
+    exit;
+    
+
+} 
+?>
 <!DOCTYPE HTML>
 <html>
 	<head>
@@ -13,6 +66,7 @@
 		<link rel="stylesheet" href="./assets/css/main.css" />
 	</head>
 	<body>
+
 <div class="w3-top">
 	<ul class="w3-navbar" id="myNavbar">
 	  <li class="w3-hide-small w3-right">
@@ -26,7 +80,7 @@
 	  </li>
 	</ul>
   </div>
-  
+
   <!-- First Parallax Image with Logo Text -->
   <div class="bgimg-1 w3-opacity w3-display-container">
 	<div class="w3-display-middle" style="white-space:nowrap;">
@@ -133,17 +187,20 @@
 		  <i class="fa fa-envelope w3-hover-text-black" style="width:30px"> </i> Email: email@gmail.com<br>
 		</div>
 		<p>Bacon ipsum dolor amet ground round shankle frankfurter:</p>
-		<div class="w3-row-padding" style="margin:0 -16px 8px -16px">
-		  <div class="w3-half">
-			<input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Name">
-		  </div>
-		  <div class="w3-half">
-			<input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Email">
-		  </div>
-		</div>
-		<input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Comment">
-		<a href="mailto:email@gmail.com" class="w3-btn w3-section w3-right">SEND</a>
-	  </div>
+       
+		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
+			<div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+		  	<div class="w3-half">
+				<input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Name" name="name" required>
+		 	 </div>
+		  	<div class="w3-half">
+				<input class="w3-input w3-border w3-hover-light-grey" type="email" required placeholder="Email" name="email">
+		  	</div>
+			</div>
+            <input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Comment" name="comment">
+            <input type="submit" name="send" value="Send" class="w3-btn w3-right w3-section">
+		</form>
+	   </div>	
 	</address>
   </div>
   
