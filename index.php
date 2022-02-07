@@ -1,55 +1,54 @@
 <?php
 
-if (isset($_POST['email']) && (isset($_POST['name']))) {
+if (isset($_POST['send'])) {
+	
+	$POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
 
-    $POST = filter_var_array($_POST, FILTER_SANITIZE_STRING);
+	$errorMsg ="Error ";
+	
+	$name = $POST['name'];
+    // check if name only contains letters and whitespace
+    if (!preg_match("/^[a-zA-Z-' ]*$/",$name)) {
+      $errorMsg = $errorMsg . ", only letters and white space allowed";
+    }
+	// validate email
+	if (!filter_var($POST['email'], FILTER_VALIDATE_EMAIL)) {
+		$emailErr = $errorMsg . ", invalid email format";
+	  }
+  
+	if($errorMsg == "Error "){
+		$isError = false;
+		echo ("dans le else");
+		//$name = $POST['name'];
+		$to = "point7test@gmail.com";
+		$email = strip_tags($POST['email']);
+		$subject = "Web form";
+		$comment = '<p>Message received from: ' . $name . '</p> 
+				<p>Email: ' . $email . '</p>
+				<p>Comment: ' . strip_tags($POST['comment']) . '</p>';
+		
+		$headers = [
+			'MIME-Version' => 'MIME-Version: 1.0',
+			'Content-type' => 'text/html; charset=UTF-8',
+			'From' => $name,
+			'Reply-to' => $email,
+		];
+		
+		try {
+			mail($to, $subject, $comment, $headers);
+			echo "<script> alert('email sent') </script>";
+		} catch (Exception $e){
+			echo "<script> alert('Message could not be sent')";
+		} 
 
-    /*function sanitize_my_email($field){
-        $field= filter_var($field, FILTER_SANITIZE_EMAIL);
-        if (filter_var($field, FILTER_VALIDATE_EMAIL)) {
-            return true;
-        } else {
-            return false;
-        }
-    }*/
-
-    $name = $POST['name'];
-    $to = "point7test@gmail.com";
-    $email = strip_tags($POST['email']);
-    $subject = "Web form";
-    $comment = '<p>Message received from: ' . $name . '</p> 
-               <p>Email: ' . $email . '</p>
-               <p>Comment: ' . strip_tags($POST['comment']) . '</p>';
-    
-    $headers = [
-        'MIME-Version' => 'MIME-Version: 1.0',
-        'Content-type' => 'text/html; charset=UTF-8',
-        'From' => $name,
-        'Reply-to' => $email,
-    ];
-    
-    /*if(sanitize_my_email($email)) {
-        try {
-            mail($to, $subject, $comment, $headers);
-            echo "Thank you, your message has been sent!";
-        } catch (Exception $e){
-            echo "Message could not be sent";
-        } 
-    } else {
-        echo "Message could not be sent";
-    }*/
-    try {
-        mail($to, $subject, $comment, $headers);
-        echo "Thank you, your message has been sent!";
-    } catch (Exception $e){
-        echo "Message could not be sent";
-    } 
-
-    header("location: success.html");
-    exit;
-    
-
-} 
+		header("location: index.php");
+		exit;	
+	} else {
+		$isError = true;
+	}
+} else {
+	$isError=false;
+}
 ?>
 <!DOCTYPE HTML>
 <html>
@@ -187,8 +186,16 @@ if (isset($_POST['email']) && (isset($_POST['name']))) {
 		  <i class="fa fa-envelope w3-hover-text-black" style="width:30px"> </i> Email: email@gmail.com<br>
 		</div>
 		<p>Bacon ipsum dolor amet ground round shankle frankfurter:</p>
-       
-		<form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
+		<!-- Check if error -->
+		<?php 
+			if($isError == true){ 
+				echo "<script>alert('" . $errorMsg . "');</script>";
+			
+			} else { 
+				echo "<script>alert('Your message has been sent'); </script>";
+			}
+		?>
+		<form id="contact" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="POST" enctype="multipart/form-data">
 			<div class="w3-row-padding" style="margin:0 -16px 8px -16px">
 		  	<div class="w3-half">
 				<input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Name" name="name" required>
@@ -197,7 +204,7 @@ if (isset($_POST['email']) && (isset($_POST['name']))) {
 				<input class="w3-input w3-border w3-hover-light-grey" type="email" required placeholder="Email" name="email">
 		  	</div>
 			</div>
-            <input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Comment" name="comment">
+            <input class="w3-input w3-border w3-hover-light-grey" type="text" placeholder="Comment" name="comment" required>
             <input type="submit" name="send" value="Send" class="w3-btn w3-right w3-section">
 		</form>
 	   </div>	
